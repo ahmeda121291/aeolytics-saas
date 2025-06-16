@@ -1,0 +1,59 @@
+[project]
+ref = "your_project_ref"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+port = 54325
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+port = 54326
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+security_update_password_require_reauthentication = true
+enable_signup = true
+enable_manual_linking = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+[edge_functions]
+enabled = true
+port = 54327
+
+# 🔒 SECURITY NOTE:
+# DO NOT store sensitive API keys in this config file.
+# Instead, go to your Supabase Dashboard → Project Settings → Edge Functions → Environment Variables
+# Add these there:
+#   OPENAI_API_KEY
+#   PERPLEXITY_API_KEY
+#   GEMINI_API_KEY
+
+# The edge_functions.env section has been removed to prevent leaking secrets in GitHub commits.
