@@ -36,7 +36,6 @@ const PricingSection = () => {
         'All AI engines (ChatGPT, Perplexity, Gemini)',
         'Advanced analytics & trends',
         'Fix-It briefs generation',
-        'Slack/Notion integrations',
         'Weekly email reports',
         'Priority support'
       ],
@@ -57,12 +56,11 @@ const PricingSection = () => {
         '10,000 queries/month',
         '10 domains tracking',
         'All AI engines + early access',
+        'Advanced analytics & trends',
         'White-label PDF reports',
         'Unlimited Fix-It briefs',
-        'API access',
         'Team collaboration',
-        'Dedicated account manager',
-        'Custom integrations'
+        'Dedicated account manager'
       ],
       color: 'border-accent-500',
       buttonColor: 'bg-accent-500 hover:bg-accent-600 text-dark-900',

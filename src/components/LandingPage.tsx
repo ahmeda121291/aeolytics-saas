@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import PricingSection from './PricingSection';
 import FeatureShowcase from './FeatureShowcase';
+import HowItWorks from './HowItWorks';
 import DemoCarousel from './DemoCarousel';
 
 const LandingPage = () => {
@@ -70,8 +71,16 @@ const LandingPage = () => {
               <ArrowRight className="w-5 h-5" />
             </button>
             
-            <button className="border border-gray-600 hover:border-accent-500 text-gray-300 hover:text-accent-500 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105">
-              Watch Demo
+            <button 
+              onClick={() => {
+                const element = document.getElementById('how-it-works');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="border border-gray-600 hover:border-accent-500 text-gray-300 hover:text-accent-500 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105"
+            >
+              See How It Works
             </button>
           </motion.div>
 
@@ -88,6 +97,9 @@ const LandingPage = () => {
 
       {/* Feature Showcase */}
       <FeatureShowcase />
+
+      {/* How It Works Section */}
+      <HowItWorks />
 
       {/* Stats Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-dark-900 via-primary-900/10 to-dark-900">

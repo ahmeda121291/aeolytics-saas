@@ -15,11 +15,13 @@ import {
   MoreVertical,
   Download,
   Edit,
-  Trash2
+  Trash2,
+  Lock
 } from 'lucide-react';
 import { useQueries } from '../hooks/useQueries';
 import { useDomains } from '../hooks/useDomains';
 import { useAuth } from '../contexts/AuthContext';
+import { usePlanRestrictions } from '../hooks/usePlanRestrictions';
 import { useAdvancedFilters } from '../hooks/useAdvancedFilters';
 import { useBulkOperations } from '../hooks/useBulkOperations';
 import { useExport } from '../hooks/useExport';
@@ -31,6 +33,7 @@ const QueryTable = () => {
   const { queries, loading, addQuery, deleteQuery } = useQueries();
   const { domains } = useDomains();
   const { exportData } = useExport();
+  const { canUseEngine, getAvailableEngines, currentPlan } = usePlanRestrictions();
   
   const [selectedQueries, setSelectedQueries] = useState<string[]>([]);
   const [showAddQuery, setShowAddQuery] = useState(false);
@@ -39,7 +42,7 @@ const QueryTable = () => {
     query_text: '',
     domain_id: '',
     intent_tags: [] as string[],
-    engines: ['ChatGPT', 'Perplexity', 'Gemini'] as string[]
+    engines: getAvailableEngines() // 🔒 RESTRICTED: Based on plan
   });
 
   // Advanced filtering
@@ -55,6 +58,7 @@ const QueryTable = () => {
 
   // Available tags from all queries
   const availableTags = [...new Set(queries.flatMap(q => q.intent_tags))];
+  const availableEngines = getAvailableEngines();
 
   const toggleQuerySelection = (id: string) => {
     setSelectedQueries(prev => 
@@ -80,7 +84,7 @@ const QueryTable = () => {
         query_text: newQuery.query_text,
         domain_id: newQuery.domain_id || undefined,
         intent_tags: newQuery.intent_tags,
-        engines: newQuery.engines
+        engines: newQuery.engines.filter(engine => canUseEngine(engine)) // 🔒 Filter by plan
       });
       
       setShowAddQuery(false);
@@ -88,7 +92,7 @@ const QueryTable = () => {
         query_text: '',
         domain_id: '',
         intent_tags: [],
-        engines: ['ChatGPT', 'Perplexity', 'Gemini']
+        engines: getAvailableEngines()
       });
     } catch (error) {
       console.error('Error adding query:', error);
@@ -111,7 +115,6 @@ const QueryTable = () => {
   };
 
   const planLimits = { free: 50, pro: 1000, agency: 10000 };
-  const currentPlan = user?.profile?.plan || 'free';
   const maxQueries = planLimits[currentPlan];
 
   if (loading) {
@@ -160,6 +163,24 @@ const QueryTable = () => {
           </motion.button>
         </div>
       </div>
+
+      {/* Plan Restriction Notice */}
+      {currentPlan === 'free' && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+          <div className="flex items-center gap-2">
+            <Lock className="w-5 h-5 text-yellow-400" />
+            <div>
+              <div className="text-yellow-400 font-medium">Free Plan Limitations</div>
+              <div className="text-yellow-300 text-sm">
+                Free accounts are limited to ChatGPT tracking only. 
+                <button className="text-primary-400 hover:text-primary-300 ml-1 underline">
+                  Upgrade to Pro
+                </button> for all AI engines.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters and Controls */}
       <div className="flex items-center justify-between bg-gray-800/50 border border-gray-700 rounded-xl p-4">
@@ -286,8 +307,18 @@ const QueryTable = () => {
                       <td className="p-4">
                         <div className="flex gap-1">
                           {query.engines.map((engine) => (
-                            <span key={engine} className="px-2 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
+                            <span 
+                              key={engine} 
+                              className={`px-2 py-1 rounded-full text-xs ${
+                                canUseEngine(engine) 
+                                  ? 'bg-gray-700 text-gray-300' 
+                                  : 'bg-red-500/20 text-red-400'
+                              }`}
+                            >
                               {engine}
+                              {!canUseEngine(engine) && (
+                                <Lock className="w-3 h-3 inline ml-1" />
+                              )}
                             </span>
                           ))}
                         </div>
@@ -415,8 +446,16 @@ const QueryTable = () => {
                   
                   <div className="flex gap-1 mt-3">
                     {query.engines.map((engine) => (
-                      <span key={engine} className="px-2 py-1 bg-gray-600 rounded text-xs text-gray-300">
+                      <span 
+                        key={engine} 
+                        className={`px-2 py-1 rounded text-xs ${
+                          canUseEngine(engine) 
+                            ? 'bg-gray-600 text-gray-300' 
+                            : 'bg-red-500/20 text-red-400'
+                        }`}
+                      >
                         {engine}
+                        {!canUseEngine(engine) && <Lock className="w-3 h-3 inline ml-1" />}
                       </span>
                     ))}
                   </div>
@@ -534,12 +573,25 @@ const QueryTable = () => {
                             }));
                           }
                         }}
-                        className="w-4 h-4 text-primary-500 border-gray-600 rounded focus:ring-primary-500"
+                        disabled={!canUseEngine(engine)} // 🔒 RESTRICTED: Based on plan
+                        className="w-4 h-4 text-primary-500 border-gray-600 rounded focus:ring-primary-500 disabled:opacity-50"
                       />
-                      <span className="ml-2 text-gray-300">{engine}</span>
+                      <span className={`ml-2 ${
+                        canUseEngine(engine) ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {engine}
+                        {!canUseEngine(engine) && (
+                          <Lock className="w-3 h-3 inline ml-1" />
+                        )}
+                      </span>
                     </label>
                   ))}
                 </div>
+                {currentPlan === 'free' && (
+                  <div className="text-xs text-yellow-400 mt-2">
+                    Free plan limited to ChatGPT only
+                  </div>
+                )}
               </div>
 
               <div>

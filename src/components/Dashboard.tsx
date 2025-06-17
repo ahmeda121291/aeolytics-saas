@@ -21,7 +21,8 @@ import {
   Smartphone,
   CreditCard,
   CheckCircle,
-  X
+  X,
+  Users
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -38,6 +39,7 @@ import EnhancedAnalytics from './EnhancedAnalytics';
 import MobileOptimizedView from './MobileOptimizedView';
 import BillingManagement from './BillingManagement';
 import SubscriptionStatus from './SubscriptionStatus';
+import TeamManagement from './TeamManagement';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -80,6 +82,7 @@ const Dashboard = () => {
     { id: 'reports', label: 'Professional Reports', icon: Download },
     { id: 'email', label: 'Email Reports', icon: Mail },
     { id: 'export', label: 'Data Export', icon: Download },
+    { id: 'teams', label: 'Team Collaboration', icon: Users },
     { id: 'billing', label: 'Billing', icon: CreditCard },
   ];
 
@@ -121,6 +124,11 @@ const Dashboard = () => {
                 {tab.id === 'reports' && (
                   <span className="ml-auto px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-medium">
                     Pro
+                  </span>
+                )}
+                {tab.id === 'teams' && (
+                  <span className="ml-auto px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">
+                    Agency
                   </span>
                 )}
                 {tab.id === 'billing' && (
@@ -179,25 +187,11 @@ const Dashboard = () => {
                 Generate Brief
               </button>
               <button
-                onClick={() => setActiveTab('email')}
+                onClick={() => setActiveTab('teams')}
                 className="w-full flex items-center gap-2 text-gray-400 hover:text-blue-500 text-sm py-2 transition-colors"
               >
-                <Mail className="w-4 h-4" />
-                Send Report
-              </button>
-              <button
-                onClick={() => setActiveTab('export')}
-                className="w-full flex items-center gap-2 text-gray-400 hover:text-purple-500 text-sm py-2 transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                Export Data
-              </button>
-              <button
-                onClick={() => setActiveTab('billing')}
-                className="w-full flex items-center gap-2 text-gray-400 hover:text-green-500 text-sm py-2 transition-colors"
-              >
-                <CreditCard className="w-4 h-4" />
-                Manage Billing
+                <Users className="w-4 h-4" />
+                Manage Team
               </button>
             </div>
           </div>
@@ -231,6 +225,7 @@ const Dashboard = () => {
             {activeTab === 'reports' && <ReportGenerator />}
             {activeTab === 'email' && <EmailReportCenter />}
             {activeTab === 'export' && <ExportCenter />}
+            {activeTab === 'teams' && <TeamManagement />}
             {activeTab === 'billing' && <BillingManagement />}
           </motion.div>
         </main>
