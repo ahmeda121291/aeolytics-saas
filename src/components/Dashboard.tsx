@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -22,7 +23,9 @@ import {
   CreditCard,
   CheckCircle,
   X,
-  Users
+  Users,
+  HelpCircle,
+  BookOpen
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -40,12 +43,15 @@ import MobileOptimizedView from './MobileOptimizedView';
 import BillingManagement from './BillingManagement';
 import SubscriptionStatus from './SubscriptionStatus';
 import TeamManagement from './TeamManagement';
+import UserProfile from './UserProfile';
+import HelpCenter from './HelpCenter';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedDomain, setSelectedDomain] = useState('all');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // Handle checkout success/cancel
   useEffect(() => {
@@ -73,18 +79,25 @@ const Dashboard = () => {
   }
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'analytics', label: 'Enhanced Analytics', icon: Activity },
-    { id: 'citations', label: 'Citations', icon: Eye },
-    { id: 'queries', label: 'Queries', icon: Search },
-    { id: 'domains', label: 'Domains', icon: Target },
-    { id: 'briefs', label: 'Fix-It Briefs', icon: FileText },
-    { id: 'reports', label: 'Professional Reports', icon: Download },
-    { id: 'email', label: 'Email Reports', icon: Mail },
-    { id: 'export', label: 'Data Export', icon: Download },
-    { id: 'teams', label: 'Team Collaboration', icon: Users },
-    { id: 'billing', label: 'Billing', icon: CreditCard },
+    { id: 'overview', label: 'Overview', icon: BarChart3, path: '' },
+    { id: 'analytics', label: 'Enhanced Analytics', icon: Activity, path: 'analytics' },
+    { id: 'citations', label: 'Citations', icon: Eye, path: 'citations' },
+    { id: 'queries', label: 'Queries', icon: Search, path: 'queries' },
+    { id: 'domains', label: 'Domains', icon: Target, path: 'domains' },
+    { id: 'briefs', label: 'Fix-It Briefs', icon: FileText, path: 'briefs' },
+    { id: 'reports', label: 'Professional Reports', icon: Download, path: 'reports' },
+    { id: 'email', label: 'Email Reports', icon: Mail, path: 'email' },
+    { id: 'export', label: 'Data Export', icon: Download, path: 'export' },
+    { id: 'teams', label: 'Team Collaboration', icon: Users, path: 'teams' },
+    { id: 'billing', label: 'Billing', icon: CreditCard, path: 'billing' },
+    { id: 'profile', label: 'Profile', icon: User, path: 'profile' },
+    { id: 'help', label: 'Help Center', icon: HelpCircle, path: 'help' },
   ];
+
+  const handleTabChange = (tabId: string, path: string) => {
+    setActiveTab(tabId);
+    navigate(`/dashboard/${path}`);
+  };
 
   return (
     <div className="min-h-screen bg-dark-900 text-dark-100">
@@ -107,7 +120,7 @@ const Dashboard = () => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id, tab.path)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
                   activeTab === tab.id
                     ? 'bg-primary-500/20 text-primary-400 border border-primary-500/30'
@@ -159,39 +172,46 @@ const Dashboard = () => {
             <h3 className="text-sm font-medium text-gray-400 mb-3">Quick Actions</h3>
             <div className="space-y-2">
               <button
-                onClick={() => setActiveTab('domains')}
+                onClick={() => handleTabChange('domains', 'domains')}
                 className="w-full flex items-center gap-2 text-gray-400 hover:text-accent-500 text-sm py-2 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Add Domain
               </button>
               <button
-                onClick={() => setActiveTab('queries')}
+                onClick={() => handleTabChange('queries', 'queries')}
                 className="w-full flex items-center gap-2 text-gray-400 hover:text-accent-500 text-sm py-2 transition-colors"
               >
                 <Search className="w-4 h-4" />
                 New Query
               </button>
               <button
-                onClick={() => setActiveTab('citations')}
+                onClick={() => handleTabChange('citations', 'citations')}
                 className="w-full flex items-center gap-2 text-gray-400 hover:text-accent-500 text-sm py-2 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 Run Citation Check
               </button>
               <button
-                onClick={() => setActiveTab('briefs')}
+                onClick={() => handleTabChange('briefs', 'briefs')}
                 className="w-full flex items-center gap-2 text-gray-400 hover:text-accent-500 text-sm py-2 transition-colors"
               >
                 <Zap className="w-4 h-4" />
                 Generate Brief
               </button>
               <button
-                onClick={() => setActiveTab('teams')}
+                onClick={() => handleTabChange('teams', 'teams')}
                 className="w-full flex items-center gap-2 text-gray-400 hover:text-blue-500 text-sm py-2 transition-colors"
               >
                 <Users className="w-4 h-4" />
                 Manage Team
+              </button>
+              <button
+                onClick={() => handleTabChange('help', 'help')}
+                className="w-full flex items-center gap-2 text-gray-400 hover:text-green-500 text-sm py-2 transition-colors"
+              >
+                <HelpCircle className="w-4 h-4" />
+                Get Help
               </button>
             </div>
           </div>
@@ -210,24 +230,21 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 p-8">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            {activeTab === 'overview' && <MetricsOverview />}
-            {activeTab === 'analytics' && <EnhancedAnalytics />}
-            {activeTab === 'citations' && <CitationTracker />}
-            {activeTab === 'queries' && <QueryTable />}
-            {activeTab === 'domains' && <DomainManager />}
-            {activeTab === 'briefs' && <FixItBriefs />}
-            {activeTab === 'reports' && <ReportGenerator />}
-            {activeTab === 'email' && <EmailReportCenter />}
-            {activeTab === 'export' && <ExportCenter />}
-            {activeTab === 'teams' && <TeamManagement />}
-            {activeTab === 'billing' && <BillingManagement />}
-          </motion.div>
+          <Routes>
+            <Route path="/" element={<MetricsOverview />} />
+            <Route path="/analytics" element={<EnhancedAnalytics />} />
+            <Route path="/citations" element={<CitationTracker />} />
+            <Route path="/queries" element={<QueryTable />} />
+            <Route path="/domains" element={<DomainManager />} />
+            <Route path="/briefs" element={<FixItBriefs />} />
+            <Route path="/reports" element={<ReportGenerator />} />
+            <Route path="/email" element={<EmailReportCenter />} />
+            <Route path="/export" element={<ExportCenter />} />
+            <Route path="/teams" element={<TeamManagement />} />
+            <Route path="/billing" element={<BillingManagement />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/help" element={<HelpCenter />} />
+          </Routes>
         </main>
       </div>
     </div>

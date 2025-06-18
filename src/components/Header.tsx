@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { BarChart3, Menu, X, HelpCircle, ExternalLink } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,6 +47,13 @@ const Header = () => {
             >
               Pricing
             </button>
+            <Link 
+              to="/help-center"
+              className="text-gray-300 hover:text-white transition-colors flex items-center gap-1"
+            >
+              Help Center
+              <HelpCircle className="w-4 h-4" />
+            </Link>
           </nav>
 
           {/* Desktop Auth Buttons */}
@@ -103,15 +110,23 @@ const Header = () => {
               >
                 Pricing
               </button>
+              <Link 
+                to="/help-center"
+                className="text-gray-300 hover:text-white transition-colors flex items-center gap-1"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Help Center
+                <HelpCircle className="w-4 h-4" />
+              </Link>
               <hr className="border-gray-800" />
               <button 
-                onClick={() => navigate('/auth')}
+                onClick={() => { navigate('/auth'); setIsMenuOpen(false); }}
                 className="text-gray-300 hover:text-white transition-colors text-left"
               >
                 Sign In
               </button>
               <button
-                onClick={() => navigate('/auth')}
+                onClick={() => { navigate('/auth'); setIsMenuOpen(false); }}
                 className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg font-medium transition-all text-left"
               >
                 Start Free Trial

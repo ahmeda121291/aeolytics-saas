@@ -19,6 +19,8 @@ import PricingSection from './PricingSection';
 import FeatureShowcase from './FeatureShowcase';
 import HowItWorks from './HowItWorks';
 import DemoCarousel from './DemoCarousel';
+import Footer from './Footer';
+import SEO, { generateWebsiteStructuredData, generateOrganizationStructuredData, generateFAQStructuredData } from '../lib/seo';
 
 const LandingPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -28,8 +30,32 @@ const LandingPage = () => {
     setIsVisible(true);
   }, []);
 
+  const faqs = [
+    {
+      question: "What makes AEOlytics different from traditional SEO tools?",
+      answer: "Unlike traditional SEO tools that focus on search engine rankings, AEOlytics specializes in Answer Engine Optimization (AEO) - tracking and improving your visibility in AI-generated responses."
+    },
+    {
+      question: "Which AI engines does AEOlytics support?",
+      answer: "AEOlytics currently supports ChatGPT, Perplexity, and Gemini. Free accounts can track ChatGPT only, while Pro and Agency plans include all engines."
+    },
+    {
+      question: "How often should I run citation checks?",
+      answer: "For optimal tracking, we recommend running citation checks weekly for consistent data to identify trends and measure the impact of your content improvements."
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-dark-900 text-dark-100">
+      <SEO
+        title="AI Citation Analytics Platform"
+        description="Track how your brand appears in ChatGPT, Perplexity, and Gemini responses with AEOlytics. Get insights to improve your AI visibility and boost brand mentions."
+        structuredData={[
+          generateWebsiteStructuredData(),
+          generateOrganizationStructuredData(),
+          generateFAQStructuredData(faqs)
+        ]}
+      />
       <Header />
       
       {/* Hero Section */}
@@ -154,22 +180,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">AEOlytics</span>
-            </div>
-            
-            <div className="text-gray-400 text-sm">
-              © 2025 AEOlytics. Built for the AI-first future of search.
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
